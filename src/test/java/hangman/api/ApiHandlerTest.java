@@ -2,7 +2,6 @@ package hangman.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import hangman.service.GameDetail;
 import hangman.service.HangmanService;
 import hangman.store.HangmanStore;
 import org.junit.jupiter.api.Test;
@@ -50,6 +49,10 @@ class ApiHandlerTest {
         assertNotNull(game.getGameId());
         assertEquals(10, game.getState().getGuessesRemaining());
         assertEquals(0, game.getState().getNextGuessId());
+
+        String location = result.getResponse().getHeaderValue("Location").toString();
+        assertTrue(location.endsWith("api/hangman/games/" + game.getGameId()));
+
         // make sure the secret word isn't anywhere in there. Go to the store to get the secret
         String secretWord = store.loadGame(game.getGameId()).get().getSecretWord();
         assertFalse(result.getResponse().getContentAsString().contains(secretWord));

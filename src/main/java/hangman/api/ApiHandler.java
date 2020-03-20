@@ -6,6 +6,7 @@ import hangman.service.InvalidGameException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.HashSet;
@@ -31,7 +32,11 @@ public class ApiHandler {
 
     @RequestMapping(value = "/games", method = RequestMethod.POST)
     public ResponseEntity<GameResponse> newGame() {
-        return ResponseEntity.created(URI.create("")).body(buildResponse(service.createNewGame()));
+        GameDetail newGame = service.createNewGame();
+        String newResource = ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .path("/").path(newGame.getGameId())
+                .build().toString();
+        return ResponseEntity.created(URI.create(newResource)).body(buildResponse(newGame));
     }
 
     @RequestMapping(value = "/games/{gameId}", method = RequestMethod.PUT)
