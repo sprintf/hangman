@@ -36,6 +36,21 @@ Sample JSON response
 status : (NEW, IN_PROGRESS, LOST, WON)
 ```
 
+Sample Guess
+```
+curl -X PUT "http://localhost:8080/api/hangman/games/a657aa?guess=f&guessId=0"
+```
+
+If another user has updated the game in the meantime you will receive a 409 HTTP code.
+You can re-sync the state of the game with a GET:
+
+```
+curl -X GET "http://localhost:8080/api/hangman/games/a657aa"
+```
+
+Use the nextGuessId in the response in your next request in the guessId URL parameter.
+
+
 ## Design Considerations
 
 The System is designed to reduce the amount of work needed to be implemented in the client. In particular, the `status` allows the client to know whether the game is in-progress or finished so that correct messaging could be displayed to the user.
