@@ -4,11 +4,13 @@ import hangman.service.GameDetail;
 import hangman.service.HangmanService;
 import hangman.service.InvalidGameException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +47,8 @@ public class ApiHandler {
             return ResponseEntity.ok(buildResponse(service.applyGuess(gameId, guess, guessId)));
         } catch (InvalidGameException e) {
             return ResponseEntity.notFound().build();
+        } catch (ConcurrentModificationException e2) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 

@@ -150,6 +150,12 @@ class ApiHandlerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
+        mvc.perform(put("/api/hangman/games/" + game.getGameId())
+                .param("guess", "x")
+                .param("guessId", "1") // should be zero
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(409));
+
     }
 
     private GameResponse getGameResponse(MvcResult result) throws com.fasterxml.jackson.core.JsonProcessingException, UnsupportedEncodingException {
