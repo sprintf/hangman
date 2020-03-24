@@ -120,6 +120,29 @@ class ApiHandlerTest {
     }
 
     @Test
+    void testCaseInsensitive() throws Exception {
+        MvcResult result = mvc.perform(post("/api/hangman/games")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+        GameResponse game = getGameResponse(result);
+
+        String secretWord = store.loadGame(game.getGameId()).get().getSecretWord();
+        char goodGuessCapitalized = Character.toUpperCase(secretWord.charAt(0));
+
+        result = mvc.perform(put("/api/hangman/games/" + game.getGameId())
+                .param("guess", String.valueOf(goodGuessCapitalized))
+                .param("guessId", "0")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+        game = getGameResponse(result);
+
+        assertEquals(10, game.getState().getGuessesRemaining());
+        assertTrue(game.getState().getMatchingLetters().startsWith(Character.toLowerCase(goodGuessCapitalized) + ""));
+    }
+
+    @Test
     void testGuessingWithBadParams() throws Exception {
         MvcResult result = mvc.perform(post("/api/hangman/games")
                 .contentType(MediaType.APPLICATION_JSON))

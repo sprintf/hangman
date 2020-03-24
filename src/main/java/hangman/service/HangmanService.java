@@ -36,9 +36,11 @@ public class HangmanService {
     }
 
     public GameDetail applyGuess(String gameId, Character guess, int guessId) throws InvalidGameException {
-        GameDetail gameDetail = store.loadGame(gameId).orElseThrow(InvalidGameException::new);
+        GameDetail gameDetail =
+                store.loadGame(gameId).orElseThrow(InvalidGameException::new);
 
-        if (gameDetail.getStatus() == GameStatus.WON || gameDetail.getStatus() == GameStatus.LOST) {
+        if (gameDetail.getStatus() == GameStatus.WON ||
+                gameDetail.getStatus() == GameStatus.LOST) {
             throw new IllegalStateException("game has finished");
         }
 
@@ -49,7 +51,10 @@ public class HangmanService {
         }
 
         GameStatus nextState = GameStatus.IN_PROGRESS;
-        ImmutableList<Character> guesses = ImmutableList.<Character>builder().addAll(gameDetail.getGuesses()).add(guess).build();
+        ImmutableList<Character> guesses =
+                ImmutableList.<Character>builder().
+                        addAll(gameDetail.getGuesses()).
+                        add(lowercaseGuess).build();
 
         int remainingGuesses = gameDetail.getGuessesRemaining();
         if (gameDetail.getSecretWord().indexOf(lowercaseGuess) >= 0) {
@@ -81,7 +86,9 @@ public class HangmanService {
         // set of characters that are needed to be typed. As successful guesses occur,
         // this set would have elements removed. Once the set was empty then the match
         // has occurred.
-        Set<Integer> guessSet = guesses.stream().map(Integer::new).collect(Collectors.toSet());
+        Set<Integer> guessSet =
+                guesses.stream().map(Integer::new).
+                        collect(Collectors.toSet());
         return secretWord.chars().allMatch(guessSet::contains);
     }
 
